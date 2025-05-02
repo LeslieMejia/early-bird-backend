@@ -19,7 +19,11 @@ namespace EarlyBirdAPI.Model.Repositories
         // Method to retrieve data from the database
         protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
-            conn.Open();
+            if (conn.State != System.Data.ConnectionState.Open)
+{
+    conn.Open();
+}
+
             return cmd.ExecuteReader();
         }
 

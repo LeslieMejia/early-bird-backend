@@ -2,23 +2,23 @@ using EarlyBirdAPI;
 
 public enum UserRole
     {
-        Employer, 
-        JobSeeker  
+        employer, 
+        jobseeker  
     }   
 
 
  public enum JobStatus
     {
-        Active,
-        Expired,
-        Closed
+        active,
+        expired,
+        closed
     }
 
 
 public enum ApplicationStatus
 {
-    Applied,
-    Reviewed,
-    Interview,
-    Rejected 
+    applied,
+    reviewed,
+    interview,
+    rejected 
 }

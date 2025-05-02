@@ -54,7 +54,8 @@ namespace EarlyBird.Model.Repositories
                     Email = data["email"] as string ?? string.Empty,
                     PasswordHash = data["passwordhash"] as string,
                     Phone = data["phone"] as string,
-                    Role = Enum.Parse<UserRole>(data["role"].ToString()!)
+                    Role = Enum.Parse<UserRole>(data["role"].ToString()!, ignoreCase: true)
+
                 };
             }
             return null;
@@ -82,7 +83,8 @@ namespace EarlyBird.Model.Repositories
                     Email = data["email"] as string ?? string.Empty,
                     PasswordHash = data["passwordhash"] as string,
                     Phone = data["phone"] as string,
-                    Role = Enum.Parse<UserRole>(data["role"].ToString()!)
+                    Role = Enum.Parse<UserRole>(data["role"].ToString()!, ignoreCase: true)
+
                 });
             }
             return users;

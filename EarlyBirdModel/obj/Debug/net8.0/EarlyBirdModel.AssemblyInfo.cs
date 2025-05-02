@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EarlyBirdModel")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b250ec3bfc4e3435ee30d6628916d1c22477041")]
 [assembly: System.Reflection.AssemblyProductAttribute("EarlyBirdModel")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EarlyBirdModel")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

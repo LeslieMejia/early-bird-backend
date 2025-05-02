@@ -35,6 +35,13 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection(); //PROMPTED TO REMOVE THIS LINE
 
+//CORS must be enabled in backend for frontend to reach it
+app.UseCors(policy =>
+    policy.AllowAnyHeader()
+          .AllowAnyMethod()
+          .AllowAnyOrigin());
+
+
 app.UseAuthorization();
 
 app.MapControllers();

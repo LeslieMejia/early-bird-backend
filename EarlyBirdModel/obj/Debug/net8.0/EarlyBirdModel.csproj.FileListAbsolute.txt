@@ -12,3 +12,4 @@
 /Users/lesliem/Applied Programming/Early Bird Project/EBBackend/EarlyBirdModel/obj/Debug/net8.0/EarlyBirdModel.pdb
 /Users/lesliem/Applied Programming/Early Bird Project/EBBackend/EarlyBirdModel/obj/Debug/net8.0/EarlyBirdModel.genruntimeconfig.cache
 /Users/lesliem/Applied Programming/Early Bird Project/EBBackend/EarlyBirdModel/obj/Debug/net8.0/ref/EarlyBirdModel.dll
+/Users/lesliem/Applied Programming/Early Bird Project/EBBackend/EarlyBirdModel/obj/Debug/net8.0/EarlyBirdModel.sourcelink.json
