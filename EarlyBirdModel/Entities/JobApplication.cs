@@ -18,4 +18,7 @@ namespace EarlyBirdAPI.Model.Entities;
         public string? CoverLetter { get; set; }
 
         public ApplicationStatus Status { get; set; }
-    }
+
+        public string? ResumeContent { get; set; } // ✅ ADD THIS
+}
+

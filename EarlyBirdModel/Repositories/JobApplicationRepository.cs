@@ -53,7 +53,12 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM public.jobapplication";
+                //cmd.CommandText = "SELECT * FROM public.jobapplication";
+                //
+                cmd.CommandText = @"
+                SELECT ja.id, ja.jobid, ja.jobseekerid, ja.resumeid, ja.coverletter, ja.status, r.content AS resume_content
+                FROM jobapplication ja
+                 LEFT JOIN resume r ON ja.resumeid = r.id";
 
                 var data = GetData(dbConn, cmd);
                 if (data != null)
@@ -67,7 +72,8 @@ namespace EarlyBirdAPI.Model.Repositories
                             JobSeekerId = Convert.ToInt32(data["jobseekerid"]),
                             ResumeId = data["resumeid"] is DBNull ? null : (int?)Convert.ToInt32(data["resumeid"]),
                             CoverLetter = data["coverletter"] as string,
-                            Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!)
+                            Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!),
+                            ResumeContent = data["resume_content"]?.ToString() ?? string.Empty //new
                         };
                         applications.Add(app);
                     }
