@@ -19,6 +19,11 @@ namespace EarlyBirdAPI.Model.Entities;
 
         public ApplicationStatus Status { get; set; }
 
-        public string? ResumeContent { get; set; } // ✅ ADD THIS
+     [NotMapped]
+        public string? ResumeContent { get; set; } //for frontend use not an actual column
+
+    [NotMapped]
+        public string? JobTitle { get; set; } //for frontend use not an actual column
+
 }
 

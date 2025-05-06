@@ -30,10 +30,12 @@ namespace EarlyBirdAPI.Model.Repositories
         // Method to insert data into the database
         protected bool InsertData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
-            conn.Open();
-            cmd.ExecuteNonQuery();
-            return true; // Assuming no exceptions were thrown
+           
+        conn.Open();
+        var result = cmd.ExecuteNonQuery();  // ✅ store the result of the execution
+        return result > 0; // ✅ true only if rows were affected
         }
+
 
         // Method to update data in the database
         protected bool UpdateData(NpgsqlConnection conn, NpgsqlCommand cmd)

@@ -15,6 +15,7 @@ namespace EarlyBird.Model.Repositories
         // C - Insert a new user
         public bool InsertUser(User u)
         {
+
             using var dbConn = new NpgsqlConnection(ConnectionString);
             dbConn.Open();
             using var cmd = dbConn.CreateCommand();

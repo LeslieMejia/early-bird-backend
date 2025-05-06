@@ -53,12 +53,22 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
-                //cmd.CommandText = "SELECT * FROM public.jobapplication";
-                //
-                cmd.CommandText = @"
-                SELECT ja.id, ja.jobid, ja.jobseekerid, ja.resumeid, ja.coverletter, ja.status, r.content AS resume_content
-                FROM jobapplication ja
-                 LEFT JOIN resume r ON ja.resumeid = r.id";
+    
+            // Added job title via join to show it in frontend without extra lookup
+            
+               cmd.CommandText = @"
+                SELECT 
+                     ja.id,
+                     ja.jobid,
+                     ja.jobseekerid,
+                     ja.resumeid,
+                     ja.coverletter,
+                     ja.status,
+                     r.content AS resume_content,
+                     j.title AS job_title
+                    FROM jobapplication ja
+                    LEFT JOIN resume r ON ja.resumeid = r.id
+                    LEFT JOIN job j ON ja.jobid = j.id;";
 
                 var data = GetData(dbConn, cmd);
                 if (data != null)
@@ -73,7 +83,9 @@ namespace EarlyBirdAPI.Model.Repositories
                             ResumeId = data["resumeid"] is DBNull ? null : (int?)Convert.ToInt32(data["resumeid"]),
                             CoverLetter = data["coverletter"] as string,
                             Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!),
-                            ResumeContent = data["resume_content"]?.ToString() ?? string.Empty //new
+                            ResumeContent = data["resume_content"]?.ToString() ?? string.Empty, //new
+                            JobTitle = data["job_title"]?.ToString() ?? string.Empty //new
+
                         };
                         applications.Add(app);
                     }
@@ -115,6 +127,7 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn?.Close();
             }
+
         }
 
         // U - Update an existing job application
