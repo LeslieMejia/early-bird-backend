@@ -35,14 +35,35 @@ namespace EarlyBird.API.Controllers
         }
 
         // POST: api/user
-        [HttpPost]
-        public ActionResult CreateUser([FromBody] User user)
-        {
-            var success = _userRepository.InsertUser(user);
-            if (success)
-                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
-            return BadRequest("Could not insert user.");
-        }
+
+         [HttpPost]
+         public ActionResult CreateUser([FromBody] User user)
+         {
+             // Server-side validation
+             if (!ModelState.IsValid)
+            {
+            return BadRequest(ModelState);
+             }
+
+             // Basic validation for critical fields
+             if (string.IsNullOrWhiteSpace(user.Name) || 
+            !Enum.IsDefined(typeof(UserRole), user.Role) || 
+            string.IsNullOrWhiteSpace(user.PasswordHash))
+             {
+            return BadRequest("Name, Role, and Password are required.");
+             }
+
+             // Hash the password before saving
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+
+             var success = _userRepository.InsertUser(user);
+
+             if (success)
+              return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+
+             return BadRequest("Could not insert user.");
+         }
+
 
         // PUT: api/user/5
         [HttpPut("{id}")]
@@ -70,5 +91,6 @@ namespace EarlyBird.API.Controllers
             var success = _userRepository.DeleteUser(id);
             return success ? NoContent() : StatusCode(500, "Delete failed.");
         }
+
     }
 }
