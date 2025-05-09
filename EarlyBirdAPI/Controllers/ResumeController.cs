@@ -21,7 +21,7 @@ namespace EarlyBird.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<Resume> GetResume([FromRoute] int id)
         {
-            Resume resume = Repository.GetResumeById(id);
+            Resume? resume = Repository.GetResumeById(id);
             if (resume == null)
             {
                 return NotFound();
@@ -62,7 +62,7 @@ namespace EarlyBird.API.Controllers
                 return BadRequest("Resume info not provided");
             }
 
-            Resume existing = Repository.GetResumeById(resume.Id);
+            Resume? existing = Repository.GetResumeById(resume.Id);
             if (existing == null)
             {
                 return NotFound($"Resume with id {resume.Id} not found");
@@ -80,7 +80,7 @@ namespace EarlyBird.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteResume([FromRoute] int id)
         {
-            Resume existing = Repository.GetResumeById(id);
+            Resume? existing = Repository.GetResumeById(id);
             if (existing == null)
             {
                 return NotFound($"Resume with id {id} not found");
