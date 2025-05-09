@@ -53,10 +53,10 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
-    
-            // Added job title via join to show it in frontend without extra lookup
-            
-               cmd.CommandText = @"
+
+                // Added job title via join to show it in frontend without extra lookup
+
+                cmd.CommandText = @"
                 SELECT 
                      ja.id,
                      ja.jobid,
@@ -107,18 +107,16 @@ namespace EarlyBirdAPI.Model.Repositories
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
                 cmd.CommandText = @"
-                    INSERT INTO public.jobapplication
-                    (jobid, jobseekerid, resumeid, coverletter, status)
-                    VALUES
-                    (@jobid, @jobseekerid, @resumeid, @coverletter, @status);
-                ";
+            INSERT INTO public.jobapplication
+            (jobid, jobseekerid, resumeid, coverletter, status)
+            VALUES
+            (@jobid, @jobseekerid, @resumeid, @coverletter, @status);
+        ";
 
                 cmd.Parameters.AddWithValue("@jobid", NpgsqlDbType.Integer, app.JobId);
                 cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, app.JobSeekerId);
-                cmd.Parameters.AddWithValue("@resumeid", app.ResumeId.HasValue ? 
-                    new NpgsqlParameter("@resumeid", NpgsqlDbType.Integer) { Value = app.ResumeId.Value } : 
-                    new NpgsqlParameter("@resumeid", NpgsqlDbType.Integer) { Value = DBNull.Value });
-                cmd.Parameters.AddWithValue("@coverletter", NpgsqlDbType.Text, app.CoverLetter ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@resumeid", app.ResumeId.HasValue ? (object)app.ResumeId.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@coverletter", NpgsqlDbType.Text, app.CoverLetter ?? string.Empty);
                 cmd.Parameters.AddWithValue("@status", NpgsqlDbType.Text, app.Status.ToString());
 
                 return InsertData(dbConn, cmd);
@@ -127,7 +125,6 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn?.Close();
             }
-
         }
 
         // U - Update an existing job application
@@ -136,26 +133,26 @@ namespace EarlyBirdAPI.Model.Repositories
             var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE public.jobapplication SET
-                    jobid = @jobid,
-                    jobseekerid = @jobseekerid,
-                    resumeid = @resumeid,
-                    coverletter = @coverletter,
-                    status = @status
-                WHERE id = @id;
-            ";
+        UPDATE public.jobapplication SET
+            jobid = @jobid,
+            jobseekerid = @jobseekerid,
+            resumeid = @resumeid,
+            coverletter = @coverletter,
+            status = @status
+        WHERE id = @id;
+    ";
 
             cmd.Parameters.AddWithValue("@jobid", NpgsqlDbType.Integer, app.JobId);
             cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, app.JobSeekerId);
-            cmd.Parameters.AddWithValue("@resumeid", app.ResumeId.HasValue ?
-                new NpgsqlParameter("@resumeid", NpgsqlDbType.Integer) { Value = app.ResumeId.Value } :
-                new NpgsqlParameter("@resumeid", NpgsqlDbType.Integer) { Value = DBNull.Value });
-            cmd.Parameters.AddWithValue("@coverletter", NpgsqlDbType.Text, app.CoverLetter ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@resumeid", app.ResumeId.HasValue ? (object)app.ResumeId.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@coverletter", NpgsqlDbType.Text, app.CoverLetter ?? string.Empty);
             cmd.Parameters.AddWithValue("@status", NpgsqlDbType.Text, app.Status.ToString());
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, app.Id);
 
             return UpdateData(dbConn, cmd);
         }
+
+
 
         // D - Delete a job application
         public bool DeleteJobApplication(int id)

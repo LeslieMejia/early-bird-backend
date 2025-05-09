@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using EarlyBirdAPI.Model.Entities;         // Your entity classes (Job, etc.)
-using EarlyBirdAPI.Model.Repositories;     // Your repository classes
+using EarlyBirdAPI.Model.Entities;         // Entity classes (Job, etc.)
+using EarlyBirdAPI.Model.Repositories;     // Repository classes
 
 namespace EarlyBird.API.Controllers
 {
@@ -9,33 +9,34 @@ namespace EarlyBird.API.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
+        // Inject JobRepository
         protected JobRepository Repository { get; }
 
         public JobController(JobRepository repository)
         {
             Repository = repository;
         }
-    
-        // GET - Retrieve a specific job by ID
+
+        // GET - Retrieve a job by ID
         [HttpGet("{id}")]
         public ActionResult<Job> GetJob([FromRoute] int id)
         {
-            Job job = Repository.GetJobById(id);
+            Job? job = Repository.GetJobById(id);
             if (job == null)
             {
                 return NotFound();
             }
             return Ok(job);
         }
-    
-         // GET - Retrieve all jobs
+
+        // GET - Retrieve all jobs
         [HttpGet]
         public ActionResult<IEnumerable<Job>> GetJobs()
         {
             return Ok(Repository.GetJobs());
         }
 
-         // POST - Insert a new job
+        // POST - Insert a new job
         [HttpPost]
         public ActionResult Post([FromBody] Job job)
         {
@@ -43,14 +44,16 @@ namespace EarlyBird.API.Controllers
             {
                 return BadRequest("Job data is not correct");
             }
+
             bool status = Repository.InsertJob(job);
             if (status)
             {
                 return Ok();
             }
+
             return BadRequest("Failed to insert job");
         }
-        
+
         // PUT - Update an existing job
         [HttpPut]
         public ActionResult UpdateJob([FromBody] Job job)
@@ -60,7 +63,7 @@ namespace EarlyBird.API.Controllers
                 return BadRequest("Job data is not correct");
             }
 
-            Job existingJob = Repository.GetJobById(job.Id);
+            Job? existingJob = Repository.GetJobById(job.Id);
             if (existingJob == null)
             {
                 return NotFound($"Job with id {job.Id} not found");
@@ -79,7 +82,7 @@ namespace EarlyBird.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteJob([FromRoute] int id)
         {
-            Job existingJob = Repository.GetJobById(id);
+            Job? existingJob = Repository.GetJobById(id);
             if (existingJob == null)
             {
                 return NotFound($"Job with id {id} not found");

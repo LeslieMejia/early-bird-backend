@@ -33,9 +33,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection(); //PROMPTED TO REMOVE THIS LINE
-
-//CORS must be enabled in backend for frontend to reach it
 app.UseCors(policy =>
     policy.AllowAnyHeader()
           .AllowAnyMethod()
@@ -45,5 +42,7 @@ app.UseCors(policy =>
 app.UseAuthorization();
 
 app.MapControllers();
+app.Urls.Add("http://localhost:5147"); // 👈 backend will always run on http://localhost:5147.
+app.Run();
 
 app.Run();

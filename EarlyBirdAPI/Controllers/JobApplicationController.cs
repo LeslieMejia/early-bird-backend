@@ -23,7 +23,7 @@ namespace EarlyBird.API.Controllers
         [HttpGet("{id}")]
         public ActionResult<JobApplication> GetJobApplication([FromRoute] int id)
         {
-            JobApplication application = Repository.GetJobApplicationById(id);
+            JobApplication? application = Repository.GetJobApplicationById(id);
             if (application == null)
             {
                 return NotFound(); // Returns 404 if not found
@@ -68,7 +68,7 @@ namespace EarlyBird.API.Controllers
                 return BadRequest("Job application data is not correct"); // 400 if input is null
             }
 
-            JobApplication existing = Repository.GetJobApplicationById(application.Id);
+            JobApplication? existing = Repository.GetJobApplicationById(application.Id);
             if (existing == null)
             {
                 return NotFound($"Job application with id {application.Id} not found"); // 404 if not found
@@ -88,7 +88,7 @@ namespace EarlyBird.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteJobApplication([FromRoute] int id)
         {
-            JobApplication existing = Repository.GetJobApplicationById(id);
+            JobApplication? existing = Repository.GetJobApplicationById(id);
             if (existing == null)
             {
                 return NotFound($"Job application with id {id} not found"); // 404 if not found
@@ -104,3 +104,5 @@ namespace EarlyBird.API.Controllers
         }
     }
 }
+
+

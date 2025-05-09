@@ -88,7 +88,8 @@ namespace EarlyBirdAPI.Model.Repositories
                 ";
 
                 cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, r.JobseekerId);
-                cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content);
+                cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content ?? string.Empty);
+
 
                 return InsertData(dbConn, cmd);
             }
@@ -111,7 +112,7 @@ namespace EarlyBirdAPI.Model.Repositories
             ";
 
             cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, r.JobseekerId);
-            cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content);
+            cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content ?? string.Empty);
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, r.Id);
 
             return UpdateData(dbConn, cmd);
