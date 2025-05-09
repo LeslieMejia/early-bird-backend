@@ -37,21 +37,21 @@ namespace EarlyBird.API.Controllers
         }
 
         // POST: api/Resume
-        [HttpPost]
-        public ActionResult Post([FromBody] Resume resume)
+       [HttpPost]
+        public ActionResult<Resume> Post([FromBody] Resume resume)
         {
-            if (resume == null)
-            {
-                return BadRequest("Resume info not provided");
-            }
+         if (resume == null)
+         return BadRequest("Resume info not provided");
 
-            bool status = Repository.InsertResume(resume);
-            if (status)
-            {
-                return Ok();
-            }
-            return BadRequest("Failed to create resume");
-        }
+         bool status = Repository.InsertResume(resume);
+         if (status)
+         {
+               return CreatedAtAction(nameof(GetResume), new { id = resume.Id }, resume);
+          // Or: return Ok(resume);
+         }
+         return BadRequest("Failed to create resume");
+}
+
 
         // PUT: api/Resume
         [HttpPut]

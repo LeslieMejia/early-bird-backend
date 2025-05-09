@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
 using EarlyBirdAPI.Model.Entities;         // Your entity classes (User, etc.)
 using EarlyBird.Model.Repositories;         // Your repository classes
 
@@ -36,33 +37,28 @@ namespace EarlyBird.API.Controllers
 
         // POST: api/user
 
-         [HttpPost]
-         public ActionResult CreateUser([FromBody] User user)
-         {
-             // Server-side validation
-             if (!ModelState.IsValid)
-            {
+        [HttpPost]
+        public ActionResult CreateUser([FromBody] User user)
+        {
+        if (!ModelState.IsValid)
             return BadRequest(ModelState);
-             }
 
-             // Basic validation for critical fields
-             if (string.IsNullOrWhiteSpace(user.Name) || 
-            !Enum.IsDefined(typeof(UserRole), user.Role) || 
-            string.IsNullOrWhiteSpace(user.PasswordHash))
-             {
-            return BadRequest("Name, Role, and Password are required.");
-             }
+         if (string.IsNullOrWhiteSpace(user.Name) || 
+        string.IsNullOrWhiteSpace(user.PasswordHash))
+         {
+        return BadRequest("Name and Password are required.");
+        }
 
-             // Hash the password before saving
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
 
-             var success = _userRepository.InsertUser(user);
+        var success = _userRepository.InsertUser(user);
 
-             if (success)
-              return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        if (success)
+        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
 
-             return BadRequest("Could not insert user.");
-         }
+        return BadRequest("Could not insert user.");
+        }
+
 
 
         // PUT: api/user/5
