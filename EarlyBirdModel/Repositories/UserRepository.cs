@@ -61,6 +61,36 @@ namespace EarlyBird.Model.Repositories
             }
             return null;
         }
+        // R - Get a user by email (used during login)
+        public User? GetUserByEmail(string email)
+        {
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            dbConn.Open();
+            using var cmd = dbConn.CreateCommand();
+            cmd.CommandText = @"
+                SELECT id, name, email, passwordhash, phone, role
+                FROM public.""user""
+                WHERE email = @Email;
+            ";
+            cmd.Parameters.AddWithValue("@Email", NpgsqlDbType.Text, email);
+
+            using var data = GetData(dbConn, cmd);
+            if (data != null && data.Read())
+            {
+                return new User
+                {
+                    Id = Convert.ToInt32(data["id"]),
+                    Name = data["name"] as string ?? string.Empty,
+                    Email = data["email"] as string ?? string.Empty,
+                    PasswordHash = data["passwordhash"] as string,
+                    Phone = data["phone"] as string,
+                    Role = Enum.Parse<UserRole>(data["role"].ToString()!, ignoreCase: true)
+                };
+            }
+
+            return null;
+        }
+
 
         // R - Get all users
         public List<User> GetUsers()
