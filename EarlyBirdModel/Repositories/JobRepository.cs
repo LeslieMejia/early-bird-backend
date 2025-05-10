@@ -92,12 +92,13 @@ namespace EarlyBirdAPI.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
+
                 cmd.CommandText = @"
-                    INSERT INTO public.job
-                    (employerid, title, description, location, salaryrange, category, status)
-                    VALUES
-                    (@employerid, @title, @description, @location, @salaryrange, @category, @status);
-                ";
+            INSERT INTO public.job
+            (employerid, title, description, location, salaryrange, category, status)
+            VALUES
+            (@employerid, @title, @description, @location, @salaryrange, @category, @status::jobstatus);
+        ";
 
                 cmd.Parameters.AddWithValue("@employerid", NpgsqlDbType.Integer, job.EmployerId);
                 cmd.Parameters.AddWithValue("@title", NpgsqlDbType.Text, job.Title);
@@ -105,16 +106,16 @@ namespace EarlyBirdAPI.Model.Repositories
                 cmd.Parameters.AddWithValue("@location", NpgsqlDbType.Text, job.Location ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@salaryrange", NpgsqlDbType.Text, job.SalaryRange ?? (object)DBNull.Value);
                 cmd.Parameters.AddWithValue("@category", NpgsqlDbType.Text, job.Category ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@status", NpgsqlDbType.Text, job.Status.ToString());
+                cmd.Parameters.AddWithValue("@status", NpgsqlDbType.Text, job.Status.ToString().ToLower());
 
-                bool result = InsertData(dbConn, cmd);
-                return result;
+                return InsertData(dbConn, cmd);
             }
             finally
             {
                 dbConn?.Close();
             }
         }
+
 
         // U - Update an existing job
         public bool UpdateJob(Job job)

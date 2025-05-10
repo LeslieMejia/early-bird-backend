@@ -20,7 +20,7 @@ namespace EarlyBirdAPI.Model.Entities
         public string? SalaryRange { get; set; }
 
         public string? Category { get; set; }
-
+        public string? Company { get;set; } 
         public JobStatus Status { get; set; }
     }
 }

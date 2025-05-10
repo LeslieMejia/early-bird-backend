@@ -37,6 +37,7 @@ CREATE TABLE public.job (
     location TEXT,
     salaryrange TEXT,
     category TEXT,
+    company TEXT,
     status public.jobstatus NOT NULL
 );
 

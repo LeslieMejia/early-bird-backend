@@ -2,7 +2,7 @@
 -- Seed data for user and job tables
 -- ===============================
 
--- Insert Users (5 total: 2 employers, 3 jobseekers)
+-- Insert Users
 INSERT INTO public.users (name, email, passwordhash, phone, role) VALUES
 ('Alice Johnson', 'alice@example.com', 'hashedpw1', '+4512345678', 'jobseeker'),
 ('Bob Smith', 'bob@example.com', 'hashedpw2', '+4522334455', 'employer'),
@@ -10,13 +10,14 @@ INSERT INTO public.users (name, email, passwordhash, phone, role) VALUES
 ('David Brown', 'david@example.com', 'hashedpw4', '+4544556677', 'employer'),
 ('Eva Green', 'eva@example.com', 'hashedpw5', '+4555667788', 'jobseeker');
 
--- Insert Jobs (5 total, tied to employers via employerid FK)
-INSERT INTO public.job (employerid, title, description, location, salaryrange, category, status) VALUES
-(2, 'Frontend Developer', 'Build UIs with React.', 'Copenhagen', '45k-60k', 'IT', 'active'),
-(4, 'Marketing Assistant', 'Support campaigns.', 'Aarhus', '30k-45k', 'Marketing', 'active'),
-(2, 'QA Tester', 'Test web apps.', 'Remote', '40k-50k', 'IT', 'expired'),
-(4, 'Data Analyst Intern', 'Analyze sales data.', 'Odense', '25k-30k', 'Data', 'closed'),
-(2, 'Content Writer', 'Write blog articles.', 'Copenhagen', '35k-45k', 'Media', 'active');
+-- Insert Jobs 
+INSERT INTO public.job (employerid, title, company, description, location, salaryrange, category, status) VALUES
+(2, 'Frontend Developer', 'CoolStartup', 'Build UIs with React.', 'Copenhagen', 'DKK 45,000–60,000/year', 'Full-time', 'active'),
+(4, 'Marketing Assistant', 'MarketMakers', 'Support campaigns.', 'Aarhus', 'DKK 30,000–45,000/year', 'Part-time', 'active'),
+(2, 'QA Tester', 'BugSquashers Inc.', 'Test web apps.', 'Remote', 'DKK 40,000–50,000/year', 'Full-time', 'expired'),
+(4, 'Data Analyst Intern', 'DataDriven Co.', 'Analyze sales data.', 'Odense', 'DKK 25,000–30,000/year', 'Part-time', 'closed'),
+(2, 'Content Writer', 'Content Creators', 'Write blog articles.', 'Copenhagen', 'DKK 35,000–45,000/year', 'Full-time', 'active');
+
 
 -- ===============================
 -- Seed data for resume and jobapplication tables

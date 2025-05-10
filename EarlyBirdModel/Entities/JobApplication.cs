@@ -21,9 +21,11 @@ namespace EarlyBirdAPI.Model.Entities;
 
      [NotMapped]
         public string? ResumeContent { get; set; } //for frontend use not an actual column
-
     [NotMapped]
         public string? JobTitle { get; set; } //for frontend use not an actual column
+    [NotMapped]
+        public string? JobSeekerName { get; set; } // for frontend use only
+
 
 }
 

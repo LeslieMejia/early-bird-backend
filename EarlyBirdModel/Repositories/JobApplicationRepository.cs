@@ -54,8 +54,7 @@ namespace EarlyBirdAPI.Model.Repositories
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
 
-                // Added job title via join to show it in frontend without extra lookup
-
+                // Extended join includes resume content, job title, and jobseeker name
                 cmd.CommandText = @"
                 SELECT 
                      ja.id,
@@ -65,10 +64,12 @@ namespace EarlyBirdAPI.Model.Repositories
                      ja.coverletter,
                      ja.status,
                      r.content AS resume_content,
-                     j.title AS job_title
+                     j.title AS job_title,
+                     u.name AS jobseeker_name
                     FROM jobapplication ja
                     LEFT JOIN resume r ON ja.resumeid = r.id
-                    LEFT JOIN job j ON ja.jobid = j.id;";
+                    LEFT JOIN job j ON ja.jobid = j.id
+                    LEFT JOIN users u ON ja.jobseekerid = u.id;";
 
                 var data = GetData(dbConn, cmd);
                 if (data != null)
@@ -83,9 +84,9 @@ namespace EarlyBirdAPI.Model.Repositories
                             ResumeId = data["resumeid"] is DBNull ? null : (int?)Convert.ToInt32(data["resumeid"]),
                             CoverLetter = data["coverletter"] as string,
                             Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!),
-                            ResumeContent = data["resume_content"]?.ToString() ?? string.Empty, //new
-                            JobTitle = data["job_title"]?.ToString() ?? string.Empty //new
-
+                            ResumeContent = data["resume_content"]?.ToString() ?? string.Empty,
+                            JobTitle = data["job_title"]?.ToString() ?? string.Empty,
+                            JobSeekerName = data["jobseeker_name"]?.ToString() ?? string.Empty
                         };
                         applications.Add(app);
                     }
@@ -97,8 +98,8 @@ namespace EarlyBirdAPI.Model.Repositories
                 dbConn?.Close();
             }
         }
+
         // R - Get job applications by JobseekerId
-        // This retrieves all job applications submitted by a specific jobseeker.
         public List<JobApplication> GetJobApplicationsByJobseekerId(int jobseekerId)
         {
             var dbConn = new NpgsqlConnection(ConnectionString);
@@ -117,12 +118,13 @@ namespace EarlyBirdAPI.Model.Repositories
                 ja.coverletter,
                 ja.status,
                 r.content AS resume_content,
-                j.title AS job_title
+                j.title AS job_title,
+                u.name AS jobseeker_name
             FROM jobapplication ja
             LEFT JOIN resume r ON ja.resumeid = r.id
             LEFT JOIN job j ON ja.jobid = j.id
-            WHERE ja.jobseekerid = @jobseekerid;
-        ";
+            LEFT JOIN users u ON ja.jobseekerid = u.id
+            WHERE ja.jobseekerid = @jobseekerid;";
 
                 cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, jobseekerId);
 
@@ -138,7 +140,8 @@ namespace EarlyBirdAPI.Model.Repositories
                         CoverLetter = data["coverletter"] as string,
                         Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!),
                         ResumeContent = data["resume_content"]?.ToString() ?? string.Empty,
-                        JobTitle = data["job_title"]?.ToString() ?? string.Empty
+                        JobTitle = data["job_title"]?.ToString() ?? string.Empty,
+                        JobSeekerName = data["jobseeker_name"]?.ToString() ?? string.Empty
                     });
                 }
 
@@ -149,10 +152,6 @@ namespace EarlyBirdAPI.Model.Repositories
                 dbConn.Close();
             }
         }
-
-
-
-
 
         // C - Insert a new job application
         public bool InsertJobApplication(JobApplication app)
@@ -208,8 +207,6 @@ namespace EarlyBirdAPI.Model.Repositories
             return UpdateData(dbConn, cmd);
         }
 
-
-
         // D - Delete a job application
         public bool DeleteJobApplication(int id)
         {
@@ -222,5 +219,3 @@ namespace EarlyBirdAPI.Model.Repositories
         }
     }
 }
-
-
