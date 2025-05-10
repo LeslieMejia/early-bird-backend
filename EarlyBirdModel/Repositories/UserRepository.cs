@@ -19,10 +19,12 @@ namespace EarlyBird.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             dbConn.Open();
             using var cmd = dbConn.CreateCommand();
+
             cmd.CommandText = @"
-                INSERT INTO public.""user"" (name, email, passwordhash, phone, role)
-                VALUES (@name, @email, @passwordhash, @phone, @role);
+            INSERT INTO public.users (name, email, passwordhash, phone, role)
+            VALUES (@Name, @Email, @PasswordHash, @Phone, @Role::userrole)
             ";
+
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, u.Name);
             cmd.Parameters.AddWithValue("@email", NpgsqlDbType.Text, u.Email);
             cmd.Parameters.AddWithValue("@passwordhash", NpgsqlDbType.Text, u.PasswordHash ?? (object)DBNull.Value);
@@ -40,7 +42,7 @@ namespace EarlyBird.Model.Repositories
             using var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
                 SELECT id, name, email, passwordhash, phone, role
-                FROM public.""user""
+                FROM public.users
                 WHERE id = @id;
             ";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, userId);
@@ -69,7 +71,7 @@ namespace EarlyBird.Model.Repositories
             using var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
                 SELECT id, name, email, passwordhash, phone, role
-                FROM public.""user""
+                FROM public.users
                 WHERE email = @Email;
             ";
             cmd.Parameters.AddWithValue("@Email", NpgsqlDbType.Text, email);
@@ -100,7 +102,7 @@ namespace EarlyBird.Model.Repositories
             using var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
                 SELECT id, name, email, passwordhash, phone, role
-                FROM public.""user"";
+                FROM public.users;
             ";
 
             using var data = GetData(dbConn, cmd);
@@ -128,7 +130,7 @@ namespace EarlyBird.Model.Repositories
             dbConn.Open();
             using var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE public.""user""
+                UPDATE public.users
                 SET name = @name,
                     email = @email,
                     passwordhash = @passwordhash,
@@ -154,7 +156,7 @@ namespace EarlyBird.Model.Repositories
             dbConn.Open();
             using var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                DELETE FROM public.""user""
+                DELETE FROM public.users
                 WHERE id = @id;
             ";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, userId);

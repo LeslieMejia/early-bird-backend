@@ -6,51 +6,51 @@ namespace EarlyBirdAPI.Model.Repositories
 {
     public class BaseRepository
     {
-        // Connection string for the database connection
         protected string ConnectionString { get; }
 
-        // Constructor that retrieves the connection string from the configuration
         public BaseRepository(IConfiguration configuration)
         {
-            // Using EBDatabase for the connection string key
-            ConnectionString = configuration.GetConnectionString("EBDatabase") ?? throw new InvalidOperationException("Connection string not found.");
+            ConnectionString = configuration.GetConnectionString("EBDatabase") 
+                ?? throw new InvalidOperationException("Connection string not found.");
         }
 
-        // Method to retrieve data from the database
+        // Retrieve data from the database
         protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
             if (conn.State != System.Data.ConnectionState.Open)
-{
-    conn.Open();
-}
+                conn.Open();
 
             return cmd.ExecuteReader();
         }
 
-        // Method to insert data into the database
+        // Insert data into the database
         protected bool InsertData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
-           
-        conn.Open();
-        var result = cmd.ExecuteNonQuery();  // ✅ store the result of the execution
-        return result > 0; // ✅ true only if rows were affected
+            if (conn.State != System.Data.ConnectionState.Open)
+                conn.Open();
+
+            var result = cmd.ExecuteNonQuery();
+            return result > 0;
         }
 
-
-        // Method to update data in the database
+        // Update data in the database
         protected bool UpdateData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
-            conn.Open();
+            if (conn.State != System.Data.ConnectionState.Open)
+                conn.Open();
+
             cmd.ExecuteNonQuery();
-            return true; // Assuming no exceptions were thrown
+            return true;
         }
 
-        // Method to delete data from the database
+        // Delete data from the database
         protected bool DeleteData(NpgsqlConnection conn, NpgsqlCommand cmd)
         {
-            conn.Open();
+            if (conn.State != System.Data.ConnectionState.Open)
+                conn.Open();
+
             cmd.ExecuteNonQuery();
-            return true; // Assuming no exceptions were thrown
+            return true;
         }
     }
 }

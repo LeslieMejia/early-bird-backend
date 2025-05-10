@@ -35,6 +35,8 @@ namespace EarlyBird.API.Controllers
         [HttpPost]
         public ActionResult CreateUser([FromBody] User user)
         {
+            Console.WriteLine($"👤 Received user: {user.Name}, {user.Email}, {user.Role}");
+
             if (string.IsNullOrWhiteSpace(user.Name) || string.IsNullOrWhiteSpace(user.PasswordHash))
                 return BadRequest("Name and password are required.");
 
@@ -44,6 +46,8 @@ namespace EarlyBird.API.Controllers
             return success
                 ? CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user)
                 : BadRequest("Failed to create user.");
+
+
         }
 
         // POST: api/user/login
@@ -59,8 +63,15 @@ namespace EarlyBird.API.Controllers
             if (!isValid)
                 return Unauthorized("Invalid email or password");
 
-            return Ok(new { message = "Login successful", userId = user.Id, role = user.Role });
+            return Ok(new
+            {
+                id = user.Id,
+                name = user.Name,
+                email = user.Email,
+                role = user.Role
+            });
         }
+
 
         // PUT: api/user/5
         [HttpPut("{id}")]

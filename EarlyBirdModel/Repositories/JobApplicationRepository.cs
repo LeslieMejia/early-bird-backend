@@ -97,6 +97,62 @@ namespace EarlyBirdAPI.Model.Repositories
                 dbConn?.Close();
             }
         }
+        // R - Get job applications by JobseekerId
+        // This retrieves all job applications submitted by a specific jobseeker.
+        public List<JobApplication> GetJobApplicationsByJobseekerId(int jobseekerId)
+        {
+            var dbConn = new NpgsqlConnection(ConnectionString);
+            var applications = new List<JobApplication>();
+
+            try
+            {
+                dbConn.Open();
+                var cmd = dbConn.CreateCommand();
+                cmd.CommandText = @"
+            SELECT 
+                ja.id,
+                ja.jobid,
+                ja.jobseekerid,
+                ja.resumeid,
+                ja.coverletter,
+                ja.status,
+                r.content AS resume_content,
+                j.title AS job_title
+            FROM jobapplication ja
+            LEFT JOIN resume r ON ja.resumeid = r.id
+            LEFT JOIN job j ON ja.jobid = j.id
+            WHERE ja.jobseekerid = @jobseekerid;
+        ";
+
+                cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, jobseekerId);
+
+                var data = GetData(dbConn, cmd);
+                while (data != null && data.Read())
+                {
+                    applications.Add(new JobApplication
+                    {
+                        Id = Convert.ToInt32(data["id"]),
+                        JobId = Convert.ToInt32(data["jobid"]),
+                        JobSeekerId = Convert.ToInt32(data["jobseekerid"]),
+                        ResumeId = data["resumeid"] is DBNull ? null : (int?)Convert.ToInt32(data["resumeid"]),
+                        CoverLetter = data["coverletter"] as string,
+                        Status = Enum.Parse<ApplicationStatus>(data["status"].ToString()!),
+                        ResumeContent = data["resume_content"]?.ToString() ?? string.Empty,
+                        JobTitle = data["job_title"]?.ToString() ?? string.Empty
+                    });
+                }
+
+                return applications;
+            }
+            finally
+            {
+                dbConn.Close();
+            }
+        }
+
+
+
+
 
         // C - Insert a new job application
         public bool InsertJobApplication(JobApplication app)
@@ -110,14 +166,14 @@ namespace EarlyBirdAPI.Model.Repositories
             INSERT INTO public.jobapplication
             (jobid, jobseekerid, resumeid, coverletter, status)
             VALUES
-            (@jobid, @jobseekerid, @resumeid, @coverletter, @status);
+            (@jobid, @jobseekerid, @resumeid, @coverletter, @status::applicationstatus);
         ";
 
                 cmd.Parameters.AddWithValue("@jobid", NpgsqlDbType.Integer, app.JobId);
                 cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, app.JobSeekerId);
                 cmd.Parameters.AddWithValue("@resumeid", app.ResumeId.HasValue ? (object)app.ResumeId.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@coverletter", NpgsqlDbType.Text, app.CoverLetter ?? string.Empty);
-                cmd.Parameters.AddWithValue("@status", NpgsqlDbType.Text, app.Status.ToString());
+                cmd.Parameters.AddWithValue("@status", app.Status.ToString());
 
                 return InsertData(dbConn, cmd);
             }

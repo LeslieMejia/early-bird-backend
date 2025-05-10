@@ -76,28 +76,28 @@ namespace EarlyBirdAPI.Model.Repositories
         // Create - Insert a new resume record
         public bool InsertResume(Resume r)
         {
-            NpgsqlConnection? dbConn = null;
-            try
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+            cmd.CommandText = @"
+        INSERT INTO public.resume (jobseekerid, content)
+        VALUES (@jobseekerid, @content)
+        RETURNING id;
+    ";
+
+            cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, r.JobseekerId);
+            cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content ?? string.Empty);
+
+            dbConn.Open();
+            var result = cmd.ExecuteScalar();
+            if (result != null)
             {
-                // create a new connection for database
-                dbConn = new NpgsqlConnection(ConnectionString);
-                var cmd = dbConn.CreateCommand();
-                cmd.CommandText = @"
-                    INSERT INTO public.resume (jobseekerid, content)
-                    VALUES (@jobseekerid, @content)
-                ";
-
-                cmd.Parameters.AddWithValue("@jobseekerid", NpgsqlDbType.Integer, r.JobseekerId);
-                cmd.Parameters.AddWithValue("@content", NpgsqlDbType.Text, r.Content ?? string.Empty);
-
-
-                return InsertData(dbConn, cmd);
+                r.Id = Convert.ToInt32(result); // ✅ Set the ID so ResumeController can return it
+                return true;
             }
-            finally
-            {
-                dbConn?.Close();
-            }
+
+            return false;
         }
+
 
         // Update - Update an existing resume record
         public bool UpdateResume(Resume r)
